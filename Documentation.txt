@@ -1,0 +1,60 @@
+This file contains info how to install, run and configure LitBackup. If
+You are looking for an explanation what this is all about please see
+"README.txt"
+
+INSTALLATION
+
+Currently You just need to extract all the files to a particular
+directory. Since each server You have has slightly different preferences
+I recommend to make a copy of all LitBackup files for each server. Eg.:
+/opt/litbackup/example.com/, /opt/litbackup/example2.com. That way You
+can fine tune all scripts to all servers, without interfering. It takes
+pennies of disk space (~15KB each). For simplicity we will consider that all
+LitBackup files are kept in "/opt/litbackup/example.com".
+
+I would recommend to configure all the necessary options once and just copy
+everything as a template, changing only "SERVER" parameter (see below).
+
+At first, you need to edit "/opt/litbackup/example.com/config/main.cfg".
+Main parameters for a quick launch:
+
+SERVER="example.com" - resolvable server address and a server's backup directory.
+It needs to accept SSH connections. Usually this is the only variable You change
+while adding new servers.
+
+BACKUPROOT="/mnt/largefs" - where all backups stored (not just this server)
+
+DIRSTOBACKUP=":/var :/home" - "rsync" syntax. ":/" backups everything.
+
+SSHPRIVATEKEY="/etc/ssh/ssh_host_rsa_key" - ssh key to use while connecting
+
+Please feel free to check other configuration variables - they are explained in "main.cf"
+
+After scripts are there - add a cron job to run:
+-------------------------
+35 00 * * * root /opt/litbackup/example.com/backup.sh > /dev/null
+00 09 * * * root /opt/litbackup/example.com/rotate-backups.sh > /dev/null
+-------------------------
+
+As you can see - I recommend backing up during the night and doing the rotation stuff
+during the day.
+
+That's it! During the first run the script will do a full rsync copy, so it may take
+a while, but other runs will be very fast. The scripts are self-maintaining, so You don't
+need to clean anything.
+
+SCRIPTS
+
+* backup.sh - does the actual backup
+* rotate-backups.sh - creates hardlinks, removes old and compresses large files
+* system/filelist-generator.sh - searches for modified files and directories on the remote
+server. You don't need to configure it under normal conditions.
+* find-compressed-backups.sh - if you use "COMPRESSFILES" option, than use this on the
+directory you want to restore. It will extract large files "rotate-backups.sh" created.
+
+CONFIGS
+
+* main.cfg - name says it all. It is a shared config file. All scripts include it. Options
+in "main.cf" are explained with comments. Feel free to tell me that something is unclear.
+* backup-excludes.cfg - this file is given to "rsync --exclude-from". See "man rsync" for
+syntax
