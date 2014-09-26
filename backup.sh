@@ -64,8 +64,13 @@ if [ -f $LOCKFILE ] ; then
 fi
 
 if [ -f $STATUSFILE-LASTFAIL ] ; then
-    echo "file $STATUSFILE-LASTFAIL exists. Backup has failed. Please check and remove $STATUSFILE-LASTFAIL. Exiting..."|log
-    exit 1
+    
+    if [ "x$LITBACKUPROOT" == "xyes" ] ; then
+    	echo "file $STATUSFILE-LASTFAIL exists, last backup has failed. Please check $STATUSFILE-LASTFAIL. Continuing because FORCEAFTERFAILED=yes ..."|log
+    else
+    	echo "file $STATUSFILE-LASTFAIL exists, last backup has failed. Please check and remove $STATUSFILE-LASTFAIL. FORCEAFTERFAILED in main.cf is not set to \"yes\"  Exiting..."|log
+    	exit 1
+    fi
 fi
 
 if [ -f $STATUSFILE-LASTSUCCESS ] ; then
