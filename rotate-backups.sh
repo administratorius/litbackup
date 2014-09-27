@@ -124,6 +124,8 @@ if [ "x$COMPRESSFILES" != "xyes" ] && [ -f $BACKUPROOT/$SERVER-WARNING-README ] 
 fi
 
 if [ "x$BACKUPPERMISSIONS" == "xyes" ] ; then
+	echo "Making a backup of $SERVERBACKUPS/$DATEOFBACKUP-$PREFIX permissions and owners to $SERVERBACKUPS/$DATEOFBACKUP-$PREFIX-file-permissions.gz, because BACKUPPERMISSIONS=yes..." |log
 	cd $SERVERBACKUPS/$DATEOFBACKUP-$PREFIX
 	find * -printf '%m:%U:%G:%p\n' |gzip > $SERVERBACKUPS/$DATEOFBACKUP-$PREFIX-file-permissions.gz
+	echo "done." |log
 fi

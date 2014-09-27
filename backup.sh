@@ -64,7 +64,6 @@ if [ -f $LOCKFILE ] ; then
 fi
 
 if [ -f $STATUSFILE-LASTFAIL ] ; then
-    
     if [ "x$LITBACKUPROOT" == "xyes" ] ; then
     	echo "file $STATUSFILE-LASTFAIL exists, last backup has failed. Please check $STATUSFILE-LASTFAIL. Continuing because FORCEAFTERFAILED=yes ..."|log
     else
