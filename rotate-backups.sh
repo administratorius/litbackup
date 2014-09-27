@@ -42,7 +42,7 @@ if [ ! -f $STATUSFILE-LASTSUCCESS ] ; then
     exit 1
 fi
 
-if [ -f $STATUSFILE-LASTFAIL ] ; then
+if [ -f $STATUSFILE-LASTFAIL ] && [ "x$FORCEAFTERFAILED" != "xyes" ] ; then
     echo "some backups have failed. Please check and remove $STATUSFILE-LASTFAIL. Exiting..." |logerror
     exit 1
 fi
@@ -89,7 +89,7 @@ else
 	echo "done hardlinking." |log
 fi
 
-while [ `ls -1 $SERVERBACKUPS|grep $PREFIX|wc -l` -gt $DELETEOLDER ] ; then
+while [ `ls -1 $SERVERBACKUPS|grep $PREFIX|wc -l` -gt $DELETEOLDER ] ; do
 	OLDEST=`ls -1 $SERVERBACKUPS|grep $PREFIX|head -n 1`
 	echo "number of $PREFIX backups exceeded $DELETEOLDER, removing $SERVERBACKUPS/$OLDEST..." |log
 	[ "x$OLDEST" != "x" ] && rm -rfv $SERVERBACKUPS/$OLDEST ; STATUS=$?
