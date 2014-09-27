@@ -1,6 +1,29 @@
 This file contains info how to install, run and configure LitBackup. If
-You are looking for an explanation what this is all about please see
+you are looking for an explanation what this is all about please see
 "README.txt"
+
+Important CAVEAT and DISCLAMER of LitBackup!
+
+There are limitations for "rsync" you should be aware of. One of them
+that it doesn't overwrite files if only permissions are changed - it
+just changes the permissions of a destination file. If files are hard
+linked together this leads to a situation when after chmod()'ing or
+chown()'ing a file in source server "rsync" updates the permissions to
+the same file in ALL backups. This is a drawback - hard links to the
+same file MUST have same file permissions and owners. "main.cfg" has an
+option "BACKUPPERMISSIONS", which enables backing up of file permissions
+to a separate file. It is disabled by default. Who knows! Maybe it will
+save your day sometime. Turn it on if You consider restoring only file
+permissions
+
+TL;DR: after changing permission of a file LitBackup changes permissions
+of the same file in all backups! See "BACKUPPERMISSIONS" in "main.cf"
+
+
+You have been warned!
+
+
+
 
 INSTALLATION
 
@@ -58,3 +81,4 @@ CONFIGS
 in "main.cf" are explained with comments. Feel free to tell me that something is unclear.
 * backup-excludes.cfg - this file is given to "rsync --exclude-from". See "man rsync" for
 syntax
+

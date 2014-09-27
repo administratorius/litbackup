@@ -89,10 +89,13 @@ else
 	echo "done hardlinking." |log
 fi
 
-if [ `ls -1 $SERVERBACKUPS|grep $PREFIX|wc -l` -gt $DELETEOLDER ] ; then
+while [ `ls -1 $SERVERBACKUPS|grep $PREFIX|wc -l` -gt $DELETEOLDER ] ; then
 	OLDEST=`ls -1 $SERVERBACKUPS|grep $PREFIX|head -n 1`
 	echo "number of $PREFIX backups exceeded $DELETEOLDER, removing $SERVERBACKUPS/$OLDEST..." |log
 	[ "x$OLDEST" != "x" ] && rm -rfv $SERVERBACKUPS/$OLDEST ; STATUS=$?
+	if [ -f $SERVERBACKUPS/$OLDEST-file-permissions.gz ] ; then
+		rm -f -I $SERVERBACKUPS/$OLDEST-file-permissions.gz
+	fi
 	if [ $STATUS -ne 0 ] ; then
 	    echo "removing of $OLDEST failed. Exiting..." |logerror
 	    exit 1
@@ -118,4 +121,9 @@ if [ "x$COMPRESSFILES" == "xyes" ] ; then
 fi
 if [ "x$COMPRESSFILES" != "xyes" ] && [ -f $BACKUPROOT/$SERVER-WARNING-README ] ; then
     rm -f -I $BACKUPROOT/$SERVER-WARNING-README
+fi
+
+if [ "x$BACKUPPERMISSIONS" == "xyes" ] ; then
+	cd $SERVERBACKUPS/$DATEOFBACKUP-$PREFIX
+	find * -printf '%m:%U:%G:%p\n' |gzip > $SERVERBACKUPS/$DATEOFBACKUP-$PREFIX-file-permissions.gz
 fi
