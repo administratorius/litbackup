@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>LitBackup by administratorius</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">LitBackup</h1>
+        <p class="header">Rock simple backup solution</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/administratorius/litbackup/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/administratorius/litbackup/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/administratorius/litbackup">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/administratorius">administratorius</a></p>
+
+
+      </header>
+      <section>
+        <h2>
+<a name="main-advantages-and-unique-features-of-litbackup" class="anchor" href="#main-advantages-and-unique-features-of-litbackup"><span class="octicon octicon-link"></span></a>Main advantages and unique features of Litbackup:</h2>
+
+<ul>
+<li>
+<strong>blazingly fast</strong> - 5 million files in under 5 minutes (depending on configuration)</li>
+<li>
+<strong>load balancing</strong> - backup jobs and maintenance are running separately. You tell when.</li>
+<li>
+<strong>easy on disks</strong> - large disks are slow, it uses them wisely</li>
+<li>
+<strong>very intuitive</strong> - all backups are folders with dates</li>
+<li>
+<strong>adaptive</strong> - just a few configuration options to start. Other are there if You need them.</li>
+<li>
+<strong>simple</strong> - written in BASH, requires only "rsync" and "find"</li>
+<li>
+<strong>totally FREE</strong> - released under GPL v3</li>
+</ul><hr><p>LitBackup mainly consists of two scripts:</p>
+
+<p>"<em>backup.sh</em>" - it is usually run during off-peak night hours. It looks
+for changes in your server since the last backup and rsync's them. This
+is where the magic happens - it rsync's only the files which were
+modified since the last backup. I have ran it on a busy shared hosting
+server with ~5 million inodes 15k SAS -&gt; 7.2K SATA and it took about 5
+minutes. Talk about speed!</p>
+
+<p>"<em>rotate-backups.sh</em>" - it creates hard links to save disk space. You
+see a complete tree of files in each date. It removes old files to match
+a set number of "daily", "weekly" and "monthly" backups. As an extra You
+can easily configure it to gzip large and always changing files (I'm
+looking at you, large databases and logs). And the most important aspect - it runs during the daytime, when the backup servers are idle!</p>
+
+<p>There is also a set of neat options like full "rsync" parameter
+customization, excludes, includes, rotation day setup, compression and more. It was
+done with many precautions in mind, to keep Your backups consistent and
+ready.</p>
+
+<p>What's next?</p>
+
+<p>Read the initial <a href="https://github.com/administratorius/litbackup/blob/master/Documentation.txt">docs</a></p>
+
+<p>Download it from <a href="https://github.com/administratorius/litbackup/archive/master.zip">GitHub</a>: </p>
+
+<hr><p>Although I am considering it almost production-ready, the standart
+disclaimer applies:</p>
+
+<p><strong>I AM NOT RESPONSIBLE FOR ANY DAMAGE, DIRECT OR INDIRECT, THESE BACKUP
+SCRIPTS MAY CAUSE YOU. USE AT YOUR OWN RISK!</strong></p>
+
+<p>Legal stuff aside - scripts have friendly comments, are small and easily
+readable. I am very motivated to improve it and any suggestions and feature
+requests are very appreciated via GitHub and: feedback at litbackup.eu</p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
