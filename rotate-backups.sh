@@ -102,7 +102,7 @@ while [ `ls -1 $SERVERBACKUPS|grep $PREFIX|wc -l` -gt $DELETEOLDER ] ; do
 	else
 	    echo "done removing." |log
 	fi
-fi
+done
 
 if [ "x$COMPRESSFILES" == "xyes" ] ; then
     echo "Please use \"find-compressed-backups.sh\" or \"find -name \"$GZIPSUFFIX\" on the directory You are trying to restore to make sure that all files are decompressed" > $BACKUPROOT/$SERVER-WARNING-README
