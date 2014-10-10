@@ -93,8 +93,7 @@ echo $$ > $LOCKFILE
 if [ ! -d $BACKUPDIR ] || [ $TIMESINCELASTSUCCESS -eq -1 ] ; then
     if [ ! -d $BACKUPDIR ] ; then
 		echo "creating directory $BACKUPDIR for full backup" |log 
-		mkdir -p $BACKUPDIR ; STATUS=$? ; [ $STATUS -ne 0 ] && echo "FAILED TO CREATE $BACKUPDIR. mkdir exit status $STATUS. Exiting."|logerror
-		exit $STATUS
+		mkdir -p $BACKUPDIR ; STATUS=$? ; [ $STATUS -ne 0 ] && echo "FAILED TO CREATE $BACKUPDIR. mkdir exit status $STATUS. Exiting."|logerror && exit $STATUS
     fi
     do-backup $FULLRSYNC
 fi
