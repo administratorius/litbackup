@@ -30,11 +30,19 @@ looking at you, large databases and logs). And the most important aspect
 
 Everyone asks: why this is faster than regular "rsync"?
 
-When rsync syncs two directories "/source" and "/destination" on hosts "srchost" and "dsthost", it compares "ctime" and size on both hosts. It means that on "dsthost" each file generates an "fstat" syscall, which accesses disks. 
+When rsync syncs two directories "/source" and "/destination" on hosts
+"srchost" and "dsthost", it compares "ctime" and size on both hosts. It
+means that on "dsthost" each file generates an "fstat" syscall, which
+accesses disks.
 
-My approach is to "find" all files on "srchost" and do only write operations to "dsthost" saving tons of read operations on "dsthost".
+My approach is to "find" all files on "srchost" and do only write
+operations to "dsthost" saving tons of read operations on "dsthost".
 
-Example: imagine that on "srchost" only "/var/log/messages" has changed. If I want to backup "/" I will basically compare whole "srchost" with "dsthost" server for changes and copy only "/var/log/messages". In my case "dsthost" would get a list of files to backup and do just one I/O operation - rsync "/var/log/messages"
+Example: imagine that on "srchost" only "/var/log/messages" has changed.
+If I want to backup "/" I will basically compare whole "srchost" with
+"dsthost" server for changes and copy only "/var/log/messages". In my
+case "dsthost" would get a list of files to backup and do just one I/O
+operation - rsync "/var/log/messages"
 
 
 There is also a set of neat options like full "rsync" parameter
