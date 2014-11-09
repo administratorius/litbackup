@@ -52,8 +52,8 @@ if [ -f $LOCKFILE ] ; then
     exit
 fi
 
-LASTSUCCESSDATE=`grep "backup finished succes" $STATUSFILE-LASTSUCCESS | awk '{print $2}'`
-LASTSUCCESSHOUR=`grep "backup finished succes" $STATUSFILE-LASTSUCCESS | awk '{print $3}'|awk -F ':' '{print $1}'`
+LASTSUCCESSDATE=`grep "Backup of $SERVER finished successfully" $STATUSFILE-LASTSUCCESS | awk '{print $2}'`
+LASTSUCCESSHOUR=`grep "Backup of $SERVER finished successfully" $STATUSFILE-LASTSUCCESS | awk '{print $3}'|awk -F ':' '{print $1}'`
 DATEOFBACKUP=$LASTSUCCESSDATE
 if [ $LASTDAYBEFOREHOUR -gt $LASTSUCCESSHOUR ] ; then
     DATEOFBACKUP=`date -d "$LASTSUCCESSDATE - 1 day" '+%Y-%m-%d'`
@@ -88,6 +88,7 @@ if [ $STATUS -ne 0 ] ; then
 else
 	echo "done hardlinking." |log
 fi
+fi
 
 
 while [ `find $SERVERBACKUPS  -maxdepth 1 -type d -name "*-$PREFIX"|sort -n|wc -l` -gt $DELETEOLDER ] ; do
@@ -107,11 +108,12 @@ done
 
 if [ "x$COMPRESSFILES" == "xyes" ] ; then
     echo "Please use \"find-compressed-backups.sh\" or \"find -name \"*$GZIPSUFFIX\" on the directory You are trying to restore to make sure that all files are decompressed" > $BACKUPROOT/$SERVER-WARNING-README
-    echo "You can also run \"find <restored_directory> -type f -name \"*$GZIPSUFFIX\" -exec gzip -v -d -N {} \;\"" >> $BACKUPROOT/$SERVER-WARNING-README
+    echo "To decompress - run \"find <restored_directory> -type f -name \"*$GZIPSUFFIX\" -exec gzip -v -d -N {} \;\"" >> $BACKUPROOT/$SERVER-WARNING-README
+    echo "To list - run \"find <restored_directory> -type f -name \"*$GZIPSUFFIX\"\"" >> $BACKUPROOT/$SERVER-WARNING-README
     DIRTOCOMPRESS=`date -d "$DATEOFBACKUP - 1 day" '+%Y-%m-%d'`
     if `ls $SERVERBACKUPS/$DIRTOCOMPRESS-* &> /dev/null` ; then
 		echo "compressing files in $SERVERBACKUPS/$DIRTOCOMPRESS-* ..." |log
-		echo "find $SERVERBACKUPS/$DIRTOCOMPRESS-*/ $COMPRESSFINDPARAMS"|sh ; STATUS=${PIPESTATUS[0]} 
+		echo "find $SERVERBACKUPS/$DIRTOCOMPRESS-*/ $COMPRESSFINDPARAMS"|sh ; STATUS=${PIPESTATUS[0]}
 		if [ $STATUS -ne 0 ] ; then
 	    	echo "find exit status = $STATUS. Exiting..." |logerror
 	    	exit $STATUS
