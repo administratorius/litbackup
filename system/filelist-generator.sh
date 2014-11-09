@@ -19,7 +19,7 @@ source $CURRENTDIR/../config/main.cfg
 
 
 
-BACKUPDIRS=`echo $DIRSTOBACKUP|tr -d ':'` 
+BACKUPDIRS=`echo $DIRSTOBACKUP|tr -d ':'`
 
 LOGPREFIX="filelist-generator:"
 function log {
@@ -37,20 +37,40 @@ fi
 
 #Command used to find files to backup. "find" in this case. Feel tree to generate TMPFILE the way You like. It needs to be sorted for cleanup (see below):
 echo "executing \"find $BACKUPDIRS -mount -cmin -$LASTRUNMINS\" on $SERVER"|log
-ssh -i $SSHPRIVATEKEY -p $SSHPORT -o StrictHostKeyChecking=no $SSHUSER@$SERVER "find $BACKUPDIRS -mount -cmin -$LASTRUNMINS"|sort > $FILESLIST.tmp
+ssh -i $SSHPRIVATEKEY -p $SSHPORT -o StrictHostKeyChecking=no -o ServerAliveInterval=30 $SSHUSER@$SERVER "find $BACKUPDIRS -mount -cmin -$LASTRUNMINS" > $FILESLIST.tmp
 STATUS=${PIPESTATUS[0]}
 if [ $STATUS -ne 0 ] ; then
     echo "ssh returned error $STATUS. Exiting..."|log
     exit $STATUS
 fi
 
+#Generating a list of files not to recurse
+> $BACKUPROOT/$SERVER-no-recursion-list
+while read line || [[ -n $line ]]; do
+    ssh -i $SSHPRIVATEKEY -p $SSHPORT -o StrictHostKeyChecking=no $SSHUSER@$SERVER "find $line -maxdepth 0 -mindepth 0 -type d" < /dev/null >> $BACKUPROOT/$SERVER-no-recursion-list
+done < $DIRSNORECURSIONLIST
+
+echo "made a list of directories NOT to recurse:"|log
+cat $BACKUPROOT/$SERVER-no-recursion-list | log
+
 
 #Initial values and setup:
 PREVIOUS="JHSdiuagiKUJG45IUYtsok345jhxcgkUH6537648tiyKJHGKu"  #To prevent matching of the first line 
-cat /dev/null > $FILESLIST
+> $FILESLIST
 chown root:root $FILESLIST
 chmod 600 $FILESLIST
 
+#Sorting list:
+sort $FILESLIST.tmp > $FILESLIST.tmp2
+mv -f $FILESLIST.tmp2 $FILESLIST.tmp
+
+#Excluding non recursive dirs from backup:
+grep -Fxv -f $BACKUPROOT/$SERVER-no-recursion-list $FILESLIST.tmp > $FILESLIST.tmp2
+mv -f $FILESLIST.tmp2 $FILESLIST.tmp
+
+#Doing so for rsync - trailing slash copies contents, not the directory itself:
+awk '{print $0"/"}' $BACKUPROOT/$SERVER-no-recursion-list > $BACKUPROOT/$SERVER-no-recursion-list.tmp
+mv -f $BACKUPROOT/$SERVER-no-recursion-list.tmp $BACKUPROOT/$SERVER-no-recursion-list
 
 #Cleaning the file list to only contain parent directories (e.g. /dir and /dir/subdir will leave only /dir - deduplicating to speed up recursive rsync):
 cat $FILESLIST.tmp|while read line
