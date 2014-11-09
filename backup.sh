@@ -24,31 +24,51 @@ while read DATA; do
 done
 }
 
+function do-cleanup {
+[ -f $BACKUPROOT/$SERVER-no-recursion-list ] && rm -f -I $BACKUPROOT/$SERVER-no-recursion-list
+[ -f $FILESLIST ] && rm -f -I $FILESLIST
+[ -f $STATUSFILE-LASTFAIL ] && rm -f -I $STATUSFILE-LASTFAIL
+echo "Removed temporary files."|log
+echo "Backup of $SERVER finished successfully! Yay!"|log
+mv -f $STATUSFILE $STATUSFILE-LASTSUCCESS
+rm -f -I $LOCKFILE
+}
+
 function logerror {
 while read DATA; do
 	echo `date +%s` `date +%Y-%m-%d\ %H:%M:%S` "$LOGPREFIX ERROR: $DATA"|tee -a $STATUSFILE
-	rm -f -I $LOCKFILE
+	[ -f $BACKUPROOT/$SERVER-no-recursion-list ] && rm -f -I $BACKUPROOT/$SERVER-no-recursion-list
 	[ -f $FILESLIST ] && rm -f -I $FILESLIST
+	[ -f $FILESLIST.tmp ] && rm -f -I $FILESLIST.tmp
+	[ -f $FILESLIST.tmp2 ] && rm -f -I $FILESLIST.tmp2
 	mv -fv $STATUSFILE $STATUSFILE-LASTFAIL
+	rm -f -I $LOCKFILE
 done
 }
 
 function do-backup {
-    echo "rsync command to execute:"|log
-    echo $@|log
-    echo "##############rsync log:"|log
-    echo $@|sh; STATUS=$?
+    RSYNCCMD="/bin/false"
+    case "$1" in
+        full)
+            RSYNCCMD=$FULLRSYNC
+            ;;
+        regular)
+            RSYNCCMD=$REGULARRSYNC
+            ;;
+        non-recursive)
+            RSYNCCMD=$NORECURSIONRSYNC
+    esac
+    echo "Starting $1 rsync"|log
+    echo "Command to execute:"|log
+    echo $RSYNCCMD|log
+    echo "############## Start of $1 rsync log:"|log
+    echo $RSYNCCMD|sh; STATUS=$?
     if [ $STATUS != 0 ] && [ $STATUS != 24 ] ; then
-		echo "##############rsync log end."|log
-		echo "BACKUP FAILED, rsync exited with status code $STATUS. Exiting."|logerror
+		echo "############## ...end of $1 rsync log."|log
+		echo "$1 BACKUP job FAILED, rsync exited with status code $STATUS. Exiting."|logerror
 		exit $STATUS
     else
-		echo "##############rsync log end."|log
-		echo "backup finished successfully! Yay!"|log
-		rm -f -I $LOCKFILE
-		[ -f $FILESLIST ] && rm -f -I $FILESLIST
-		mv -f $STATUSFILE $STATUSFILE-LASTSUCCESS
-		exit 0
+		echo "############## ...end of $1 rsync log."|log
     fi
 }
 
@@ -61,6 +81,7 @@ if [ -f $LOCKFILE ] ; then
 		echo "backup job is stalled. PID $PIDOFBACKUP does not exist. Removing $LOCKFILE and continuing as usual..."|log
 		rm -f -I $LOCKFILE
     fi
+do-cleanup
 fi
 
 if [ -f $STATUSFILE-LASTFAIL ] ; then
@@ -73,7 +94,7 @@ if [ -f $STATUSFILE-LASTFAIL ] ; then
 fi
 
 if [ -f $STATUSFILE-LASTSUCCESS ] ; then
-    LASTSUCCESS=`grep -i "finished success" $STATUSFILE-LASTSUCCESS|awk '{ print $1}'` 
+    LASTSUCCESS=`head -n 1 $STATUSFILE-LASTSUCCESS|awk '{ print $1}'`
     cat /dev/null > $STATUSFILE
     NOW=`date +%s`
     TIMESINCELASTSUCCESS=$((NOW-LASTSUCCESS))
@@ -92,12 +113,16 @@ echo $$ > $LOCKFILE
 
 if [ ! -d $BACKUPDIR ] || [ $TIMESINCELASTSUCCESS -eq -1 ] ; then
     if [ ! -d $BACKUPDIR ] ; then
-		echo "creating directory $BACKUPDIR for full backup" |log 
+		echo "creating directory $BACKUPDIR for full backup" |log
 		mkdir -p $BACKUPDIR ; STATUS=$? ; [ $STATUS -ne 0 ] && echo "FAILED TO CREATE $BACKUPDIR. mkdir exit status $STATUS. Exiting."|logerror && exit $STATUS
     fi
-    do-backup $FULLRSYNC
+    do-backup full
+    do-cleanup
+    exit;
 fi
 
 $FILELISTGENERATOR $TIMESINCELASTSUCCESS ; STATUS=$? ; [ $STATUS -ne 0 ] && echo "FAILURE WHILE EXECUTING $FILELISTGENERATOR -  exit status $STATUS. Exiting."|logerror && exit $STATUS
 
-do-backup $REGULARRSYNC
+do-backup regular
+do-backup non-recursive
+do-cleanup
