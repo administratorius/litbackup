@@ -124,5 +124,7 @@ fi
 $FILELISTGENERATOR $TIMESINCELASTSUCCESS ; STATUS=$? ; [ $STATUS -ne 0 ] && echo "FAILURE WHILE EXECUTING $FILELISTGENERATOR -  exit status $STATUS. Exiting."|logerror && exit $STATUS
 
 do-backup regular
-do-backup non-recursive
+if [ -f $NORECURSEDIRS ] ; then
+	do-backup non-recursive
+fi
 do-cleanup
