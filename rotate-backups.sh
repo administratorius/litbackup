@@ -107,9 +107,9 @@ while [ `find $SERVERBACKUPS  -maxdepth 1 -type d -name "*-$PREFIX"|sort -n|wc -
 done
 
 if [ "x$COMPRESSFILES" == "xyes" ] ; then
-    echo "Please use \"find-compressed-backups.sh\" or \"find -name \"*$GZIPSUFFIX\" on the directory You are trying to restore to make sure that all files are decompressed" > $BACKUPROOT/$SERVER-WARNING-README
-    echo "To decompress - run \"find <restored_directory> -type f -name \"*$GZIPSUFFIX\" -exec gzip -v -d -N {} \;\"" >> $BACKUPROOT/$SERVER-WARNING-README
-    echo "To list - run \"find <restored_directory> -type f -name \"*$GZIPSUFFIX\"\"" >> $BACKUPROOT/$SERVER-WARNING-README
+    echo "Please use \"find-compressed-backups.sh\" or \"find -name \"*$GZIPSUFFIX\" on the directory You are trying to restore to make sure that all files are decompressed" > $BACKUPROOT/$SERVER/WARNING-README
+    echo "To decompress - run \"find <restored_directory> -type f -name \"*$GZIPSUFFIX\" -exec gzip -v -d -N {} \;\"" >> $BACKUPROOT/$SERVER/WARNING-README
+    echo "To list - run \"find <restored_directory> -type f -name \"*$GZIPSUFFIX\"\"" >> $BACKUPROOT/$SERVER/WARNING-README
     DIRTOCOMPRESS=`date -d "$DATEOFBACKUP - 1 day" '+%Y-%m-%d'`
     if `ls $SERVERBACKUPS/$DIRTOCOMPRESS-* &> /dev/null` ; then
 		echo "compressing files in $SERVERBACKUPS/$DIRTOCOMPRESS-* ..." |log
@@ -123,8 +123,8 @@ if [ "x$COMPRESSFILES" == "xyes" ] ; then
 		echo "directory $SERVERBACKUPS/$DIRTOCOMPRESS-* not found. Skipping compression..." |log
     fi
 fi
-if [ "x$COMPRESSFILES" != "xyes" ] && [ -f $BACKUPROOT/$SERVER-WARNING-README ] ; then
-    rm -f -I $BACKUPROOT/$SERVER-WARNING-README
+if [ "x$COMPRESSFILES" != "xyes" ] && [ -f $BACKUPROOT/$SERVER/WARNING-README ] ; then
+    rm -f -I $BACKUPROOT/$SERVER/WARNING-README
 fi
 
 if [ "x$BACKUPPERMISSIONS" == "xyes" ] ; then

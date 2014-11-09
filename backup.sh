@@ -25,7 +25,7 @@ done
 }
 
 function do-cleanup {
-[ -f $BACKUPROOT/$SERVER-no-recursion-list ] && rm -f -I $BACKUPROOT/$SERVER-no-recursion-list
+[ -f $NORECURSEDIRS ] && rm -f -I $NORECURSEDIRS
 [ -f $FILESLIST ] && rm -f -I $FILESLIST
 [ -f $STATUSFILE-LASTFAIL ] && rm -f -I $STATUSFILE-LASTFAIL
 echo "Removed temporary files."|log
@@ -37,7 +37,7 @@ rm -f -I $LOCKFILE
 function logerror {
 while read DATA; do
 	echo `date +%s` `date +%Y-%m-%d\ %H:%M:%S` "$LOGPREFIX ERROR: $DATA"|tee -a $STATUSFILE
-	[ -f $BACKUPROOT/$SERVER-no-recursion-list ] && rm -f -I $BACKUPROOT/$SERVER-no-recursion-list
+	[ -f $NORECURSEDIRS ] && rm -f -I $NORECURSEDIRS
 	[ -f $FILESLIST ] && rm -f -I $FILESLIST
 	[ -f $FILESLIST.tmp ] && rm -f -I $FILESLIST.tmp
 	[ -f $FILESLIST.tmp2 ] && rm -f -I $FILESLIST.tmp2
