@@ -85,6 +85,7 @@ do-cleanup
 fi
 
 if [ -f $STATUSFILE-LASTFAIL ] ; then
+do-cleanup
     if [ "x$FORCEAFTERFAILED" == "xyes" ] ; then
     	echo "file $STATUSFILE-LASTFAIL exists, last backup has failed. Please check $STATUSFILE-LASTFAIL. Continuing because FORCEAFTERFAILED=yes ..."|log
     else
