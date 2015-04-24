@@ -79,7 +79,7 @@ if [ -f $LOCKFILE ] ; then
 		exit;
     else
 		echo "backup job is stalled. PID $PIDOFBACKUP does not exist. Removing $LOCKFILE and continuing as usual..."|log
-		rm -f -I $LOCKFILE
+		rm -f -I $LOCKFILE $STATUSFILE
     fi
 fi
 
