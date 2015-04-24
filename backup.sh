@@ -81,7 +81,6 @@ if [ -f $LOCKFILE ] ; then
 		echo "backup job is stalled. PID $PIDOFBACKUP does not exist. Removing $LOCKFILE and continuing as usual..."|log
 		rm -f -I $LOCKFILE
     fi
-do-cleanup
 fi
 
 if [ -f $STATUSFILE-LASTFAIL ] ; then
