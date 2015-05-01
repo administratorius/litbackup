@@ -1,6 +1,5 @@
-LitBackup is a rock simple backup solution with a few unique features.
 
-Main advantages:
+
 * blazingly fast - 5 million files in under 5 minutes (depending on configuration)
 * load balancing - backup jobs and maintenance are running separately. You tell when.
 * easy on disks - large disks are slow, it uses them wisely
@@ -10,17 +9,19 @@ Main advantages:
 * simple - written in BASH, requires "rsync" and "find"
 * totally FREE - released under GPL v3
 
+Idea:
+
 Simple tools are super easy to manage. Specifying particular backup sources,
 disabling recursion, excluding temporary files, keeping servers clean lets you
-focus to your primary job. You need to customize it (same as any other tool),
-but this gives you a simple and effective solution.
+do your backups precisely when needed and very quickly.
 
-CURRENT STATUS: Working with a few caveats.
+CURRENT STATUS:
 
 I have a full day/night job and a family, so time is limited. If someone is 
-willing to help me fine tune this thing I would like to chat with you.
+willing to help me fine tune this thing I would like to chat with you. I have
+some ideas.
 
-a.k.a. "Documentation":
+"Documentation":
 
 * "backup.sh" - it is usually run during off-peak night hours. It looks
 for changes in your server since the last backup and rsync's them. This
@@ -53,6 +54,6 @@ I AM NOT RESPONSIBLE FOR ANY DAMAGE, DIRECT OR INDIRECT, THESE BACKUP
 SCRIPTS MAY CAUSE YOU. USE AT YOUR OWN RISK!
 
 Legal stuff aside - scripts have friendly comments, are small and easily
-readable. Drop me a note with ideas:
+readable. Have fun!
 
 feedback@litbackup.eu
