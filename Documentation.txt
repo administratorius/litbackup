@@ -3,18 +3,40 @@ you are looking for an explanation what this is all about please see
 "README.txt"
 
 
-INSTALLATION
+INSTALLATION STEPS
 
-Currently You just need to extract all the files to a particular
-directory. Since each server You have has slightly different preferences
-I recommend to make a copy of all LitBackup files for each server. Eg.:
-/opt/litbackup/example.com/, /opt/litbackup/example2.com. That way You
-can fine tune all scripts to all servers, without interfering. It takes
-pennies of disk space (~15KB each). For simplicity we will consider that all
-LitBackup files are kept in "/opt/litbackup/example.com".
+1.) Extract/git clone/download all "litbackup" files to a server
 
-I would recommend to configure all the necessary options once and just copy
-everything as a template, changing only "SERVER" parameter (see below).
+2.) Place all files at the exact locations as shown:
+
+	"etc" - contains files to be placed in /etc
+	"opt" - contains files to be placed in /opt (duh!)
+
+
+3.) Use the directory "example-flavour" as a default flavour - the configuration set for a particular group of servers. Only simple characters allowed.
+
+4.) Look through the configuration files in a flavour:
+	4.1) "main.cfg" -  main configuration file. You will probably just leave default 
+         values. The ones to change are: BACKUPROOT, DIRSTOBACKUP, SSH* and NUMOF*
+         options.
+
+	4.2) "backup-excludes.cfg" - rsync-style exclude list to ignore
+
+	4.3) "no-recursion.cfg" - if some dirs are frequently changing you can add them 
+	here to speed up rsync. Keep in mind that new files in these will be ignored. 
+	Usually best for shared hosting, where dirs with 100s of domains or users force a 	full tree scan. 
+
+5.) Add different flavours for each server group if necessary. Each group can contain it's own backup settings, SSH keys, etc.
+
+6.) Edit /etc/litbackup/cron.cfg (all parameters explained in .cfg itself) 
+
+7.) Edit /etc/litbackup/servers.cfg - add hostnames and specify flavours for each of them. If no flavour is specified the default one is used. Keep in mind that hostname is where rsync connects, so make sure it is resolvable or enter it's IP
+
+6.) Add a cron job to run at 20 minutes intervals. You can run it as frequently as you like.
+
+	*/20 * * * * root /opt/litbackup/cron.sh > /dev/null
+
+
 
 At first, you need to edit "/opt/litbackup/example.com/config/main.cfg".
 Main parameters for a quick launch:

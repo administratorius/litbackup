@@ -23,6 +23,9 @@ some ideas.
 
 "Documentation":
 
+* "cron.sh" - add a cron and run it as frequently as you like. 20 mins are optimal.
+This script checks system time and invodes backup,sh or rotate.sh jobs. Also it tracks backup status for each server.
+
 * "backup.sh" - it is usually run during off-peak night hours. It looks
 for changes in your server since the last backup and rsync's them. This
 is where the magic happens - it rsync's only the files which were
@@ -31,12 +34,14 @@ server with ~5 million inodes 15k SAS -> 7.2K SATA and it took about 5
 minutes.
 
 
-* "rotate-backups.sh" - it creates hard links to save disk space. You
+* "rotate.sh" - it creates hard links to save disk space. You
 see a complete tree of files in each date. It removes old files to match
 a set number of "daily", "weekly" and "monthly" backups. As an extra You
 can easily configure it to gzip large and always changing files (I'm
 looking at you, large databases and logs). And the most important aspect
 - it runs during the daytime, when the backup servers are idle!
+
+* "filelist-generator.sh" - finds all files changed since last backup on a remote mashine
 
 Why this is faster than regular "rsync"?
 
