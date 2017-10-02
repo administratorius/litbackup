@@ -37,62 +37,7 @@ INSTALLATION STEPS
 	*/20 * * * * root /opt/litbackup/cron.sh > /dev/null
 
 
-
-At first, you need to edit "/opt/litbackup/example.com/config/main.cfg".
-Main parameters for a quick launch:
-
-SERVER="example.com" - resolvable server address and a server's backup directory.
-It needs to accept SSH connections. Usually this is the only variable You change
-while adding new servers.
-
-BACKUPROOT="/mnt/largefs" - where all backups stored (not just this server)
-
-DIRSTOBACKUP=":/var :/home" - "rsync" syntax. ":/" backups everything.
-
-SSHPRIVATEKEY="/etc/ssh/ssh_host_rsa_key" - ssh key to use while connecting
-
-Please feel free to check other configuration variables - they are explained in "main.cf"
-
-After scripts are there - add a cron job to run:
--------------------------
-35 00 * * * root /opt/litbackup/example.com/backup.sh > /dev/null
-00 09 * * * root /opt/litbackup/example.com/rotate-backups.sh > /dev/null
--------------------------
-
-As you can see - I recommend backing up during the night and doing the rotation stuff
-during the day.
-
-That's it! During the first run the script will do a full rsync copy, so it may take
-a while, but other runs will be very fast. The scripts are self-maintaining, so You don't
+That's it! During the first run the script will do a full rsync, so it may take
+a while, but other runs will be very fast. The scripts are self-maintaining, so you don't
 need to clean anything.
-
-One more thing - there is some issues in combination with "rsync", file
-permisions and hard links. If files are hard linked together this leads
-to a situation when after chmod()'ing or chown()'ing a file in source
-server "rsync" updates the permissions to the same file in ALL backups.
-This is a drawback - hard links to the same file MUST have same file
-permissions and owners. "main.cfg" has an option "BACKUPPERMISSIONS",
-which enables backing up of file permissions to a separate file. It is
-disabled by default. Who knows! Maybe it will save your day sometime.
-Turn it on if You consider restoring only file permissions
-
-You have been warned!
-
-
-SCRIPTS
-
-* backup.sh - does the actual backup
-* rotate-backups.sh - creates hardlinks, removes old and compresses large files
-* system/filelist-generator.sh - searches for modified files and directories on the remote
-server. You don't need to configure it under normal conditions.
-* find-compressed-backups.sh - if you use "COMPRESSFILES" option, than use this on the
-directory you want to restore. It will extract large files "rotate-backups.sh" created.
-
-CONFIGS
-
-* main.cfg - name says it all. It is a shared config file. All scripts include it. Options
-in "main.cf" are explained with comments. Feel free to tell me that something is unclear.
-* backup-excludes.cfg - this file is given to "rsync --exclude-from". See "man rsync" for
-syntax
-
 
