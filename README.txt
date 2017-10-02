@@ -11,9 +11,9 @@
 
 Idea:
 
-Simple tools are super easy to manage. Specifying particular backup sources,
-disabling recursion, excluding temporary files, keeping servers clean lets you
-do your backups precisely when needed and very quickly.
+Make servers find the files to backup by themselves - saves a ton of resources! A simple
+but versatile set of scripts.
+
 
 CURRENT STATUS:
 
