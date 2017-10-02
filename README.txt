@@ -1,5 +1,5 @@
 
-
+* Tested for a year on 40+ physical servers with ~5,000,000 files on each with no problems
 * blazingly fast - 5 million files in under 5 minutes (depending on configuration)
 * load balancing - backup jobs and maintenance are running separately. You tell when.
 * easy on disks - large disks are slow, it uses them wisely
@@ -33,7 +33,6 @@ modified since the last backup. I have ran it on a busy shared hosting
 server with ~5 million inodes 15k SAS -> 7.2K SATA and it took about 5
 minutes.
 
-
 * "rotate.sh" - it creates hard links to save disk space. You
 see a complete tree of files in each date. It removes old files to match
 a set number of "daily", "weekly" and "monthly" backups. As an extra You
@@ -60,5 +59,3 @@ SCRIPTS MAY CAUSE YOU. USE AT YOUR OWN RISK!
 
 Legal stuff aside - scripts have friendly comments, are small and easily
 readable. Have fun!
-
-feedback@litbackup.eu
